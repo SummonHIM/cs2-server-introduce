@@ -7,9 +7,10 @@
         <template #title>第一步：启用控制台</template>
         <template #content>
           <p>
-            1. 在主菜单中，单击<code>选项</code>→<code>键盘/鼠标</code>，进入键盘/鼠标设置页面。
+            1. 在主菜单中，单击位于左上角的 <i class="pi pi-cog" /> →
+            <code>游戏设置</code>，进入游戏设置页面。
           </p>
-          <p>2. 将<code>允许使用开发者控制台</code>设置为<code>已启用</code>。</p>
+          <p>2. 将<code>启用开发者控制台</code>设置为<code>是</code>。</p>
         </template>
       </TutorialCard>
 
@@ -38,7 +39,7 @@
             </InputGroup>
           </div>
           <p>1. 按下打开控制台的按键<code>`~</code>（标点和波浪线）打开控制台。</p>
-          <p>2. 将以上进服命令复制到控制台输入框中，并按下回车。</p>
+          <p>2. 将以上进服命令复制到控制台输入框中，并输入正确的服务器密码。最后按下回车。</p>
         </template>
       </TutorialCard>
     </div>
@@ -55,12 +56,11 @@ import { onMounted, ref } from 'vue'
 import { useToast } from 'primevue/usetoast'
 
 import IMGConnectViaConsole from '@/assets/images/connect_via_console.png'
-import IMGEnableConsole1 from '@/assets/images/enable_console_1.png'
-import IMGEnableConsole2 from '@/assets/images/enable_console_2.png'
+import IMGEnableConsole1 from '@/assets/images/enable_console.png'
 import IMGThumbConnectViaConsole from '@/assets/images/thumb_connect_via_console.png'
-import IMGThumbEnableConsole1 from '@/assets/images/thumb_enable_console_1.png'
-import IMGThumbEnableConsole2 from '@/assets/images/thumb_enable_console_2.png'
+import IMGThumbEnableConsole1 from '@/assets/images/thumb_enable_console.png'
 import type { GlobalTabbarButtonProps } from '@/components/GlobalToolbar.vue'
+import { useSrcdsStore } from '@/stores/srcds'
 import { copy } from '@/utils'
 
 defineOptions({
@@ -68,11 +68,12 @@ defineOptions({
 })
 
 const toast = useToast()
+const srcds = useSrcdsStore()
 const serverProvider = import.meta.env.VITE_SRCDS_SERVER_PROVIDER ?? '好心人'
-const serverName = import.meta.env.VITE_SRCDS_SERVER_NAME ?? 'Left 4 Dead 2'
+const serverName = import.meta.env.VITE_SRCDS_SERVER_NAME ?? 'Counter-Strike 2'
 const serverAddr = import.meta.env.VITE_SRCDS_SERVER_ADDRESS ?? 'example.com'
 const serverPort = import.meta.env.VITE_SRCDS_SERVER_PORT ?? '27015'
-const consoleConnectCommand = ref(`connect ${serverAddr}:${serverPort}`)
+const consoleConnectCommand = ref(`password ${srcds.password}; connect ${serverAddr}:${serverPort}`)
 
 // 返回菜单
 const menuItems: GlobalTabbarButtonProps[] = [
@@ -97,14 +98,9 @@ const menuSelected = ref<GlobalTabbarButtonProps>(
 // 启用控制台教程图像
 const galleriaECImages = ref([
   {
-    alt: 'Enable Console Tips 1',
+    alt: 'Enable Console Tips',
     itemImageSrc: IMGEnableConsole1,
     thumbnailImageSrc: IMGThumbEnableConsole1,
-  },
-  {
-    alt: 'Enable Console Tips 2',
-    itemImageSrc: IMGEnableConsole2,
-    thumbnailImageSrc: IMGThumbEnableConsole2,
   },
 ])
 

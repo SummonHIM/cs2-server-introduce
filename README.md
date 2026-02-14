@@ -1,4 +1,4 @@
-# l4d2-server-introduce
+# cs2-server-introduce
 
 This template should help get you started developing with Vue 3 in Vite.
 
@@ -32,10 +32,10 @@ pnpm install
 ## Environments
 
 ```
-VITE_SRCDS_SERVER_PROVIDER=Somebody    # Server provider name
-VITE_SRCDS_SERVER_NAME=Left 4 Dead 2   # Server name
-VITE_SRCDS_SERVER_ADDRESS=example.com  # Server IP
-VITE_SRCDS_SERVER_PORT=27015           # Server port
+VITE_SRCDS_SERVER_PROVIDER=Somebody      # Server provider name
+VITE_SRCDS_SERVER_NAME=Counter-Strike 2  # Server name
+VITE_SRCDS_SERVER_ADDRESS=example.com    # Server IP
+VITE_SRCDS_SERVER_PORT=27015             # Server port
 ```
 
 ### Compile and Hot-Reload for Development

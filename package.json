@@ -1,9 +1,9 @@
 {
-  "name": "l4d2-server-introduce",
-  "productName": "SummonL4D2-Server-Launcher",
-  "description": "A simple page to quickly connect to SummonHIM's Left 4 Dead 2 server.",
+  "name": "cs2-server-introduce",
+  "productName": "SummonCS2-Server-Launcher",
+  "description": "A simple page to quickly connect to SummonHIM's Counter-Strike 2 server.",
   "version": "1.0.0",
-  "repository": "https://github.com/SummonHIM/l4d2-server-introduce",
+  "repository": "https://github.com/SummonHIM/cs2-server-introduce",
   "author": {
     "email": "summonhim@qq.com",
     "name": "SummonHIM",

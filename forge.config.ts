@@ -7,7 +7,7 @@ const currentYear = new Date().getFullYear()
 const serverAddr = process.env.VITE_SRCDS_SERVER_ADDRESS ?? 'example.com'
 const serverProvider = process.env.VITE_SRCDS_SERVER_PROVIDER ?? 'Somebody'
 const pkgName =
-  serverProvider == 'SummonHIM' ? 'summonl4d2-server-launcher' : 'l4d2-server-introduce'
+  serverProvider == 'SummonHIM' ? 'summoncs2-server-launcher' : 'cs2-server-introduce'
 
 function domainToBundleId(domain: string): string {
   return domain.split('.').reverse().join('.')
@@ -21,7 +21,7 @@ export const packagerConfig = {
     beta: domainToBundleId(serverAddr) + '.beta',
     prod: domainToBundleId(serverAddr),
   }),
-  appCopyright: `© ${currentYear} ${serverProvider}. Left 4 Dead 2 and related assets are trademarks and/or copyrights of Valve Corporation. This project is not affiliated with or endorsed by Valve.`,
+  appCopyright: `© ${currentYear} ${serverProvider}. Counter-Strike 2 and related assets are trademarks and/or copyrights of Valve Corporation. This project is not affiliated with or endorsed by Valve.`,
   ignore: [
     // 只匹配根目录文件夹
     /^\.github($|\/)/,
@@ -109,7 +109,7 @@ export const publishers = [
       generateReleaseNotes: true,
       repository: {
         owner: serverProvider,
-        name: 'l4d2-server-introduce',
+        name: 'cs2-server-introduce',
       },
     },
   },

@@ -26,6 +26,9 @@
           <a>&nbsp;|&nbsp;</a>
           <a class="underline" :href="appDownUrl" target="_blank">下载客户端</a>
         </template>
+
+        <a>&nbsp;|&nbsp;</a>
+        <a class="underline cursor-pointer" @click="srcdsOpenDialog">设置服务器密码</a>
       </div>
     </div>
 
@@ -34,6 +37,46 @@
 
       <template #footer>
         <Button label="关闭" severity="secondary" @click="steamConnectDialog = false" autofocus />
+      </template>
+    </Dialog>
+
+    <Dialog
+      class="w-md"
+      v-model:visible="srcdsSetDialog"
+      modal
+      header="设置服务器密码"
+      @keydown.enter="srcdsSaveStore"
+    >
+      <FloatLabel class="mt-2" variant="on">
+        <Password
+          id="set_srcds_password"
+          v-model="srcdsPasswordValue"
+          :feedback="false"
+          fluid
+          toggleMask
+        />
+        <Message size="small" severity="secondary" variant="simple">
+          密码会长期保存在当前浏览器中。
+        </Message>
+        <label for="set_srcds_password">服务器密码</label>
+      </FloatLabel>
+
+      <template #footer>
+        <div class="flex items-center justify-between w-full">
+          <!-- 左侧 -->
+          <Button
+            label="关闭"
+            severity="secondary"
+            variant="text"
+            @click="srcdsSetDialog = false"
+          />
+
+          <!-- 右侧 -->
+          <div class="flex gap-2">
+            <Button label="重置" severity="secondary" @click="srcdsResetStore" />
+            <Button label="保存" @click="srcdsSaveStore" autofocus />
+          </div>
+        </div>
       </template>
     </Dialog>
 
@@ -52,12 +95,14 @@ import { useToast } from 'primevue'
 import FavIcon from '@/assets/logo/favicon.png'
 import GlobalFooter from '@/components/GlobalFooter.vue'
 import { DNSError, getDNSStatusMessage, resolveHostToIPv4 } from '@/dns'
+import { defaultServerPassword, useSrcdsStore } from '@/stores/srcds'
 
 enum BtnConnectStatus {
   ERROR = 1,
   RESOLVING = 2,
   RESOLVERROR = 3,
   NETERROR = 4,
+  NEEDPASSWD = 5,
 }
 
 interface ButtonConfig {
@@ -72,22 +117,26 @@ defineOptions({
   name: 'HomePage',
 })
 
-// 消息
 const toast = useToast()
+const srcds = useSrcdsStore()
 const protocol = window.location.protocol
 
 // 环境变量
 const serverProvider = import.meta.env.VITE_SRCDS_SERVER_PROVIDER ?? '好心人'
-const serverName = import.meta.env.VITE_SRCDS_SERVER_NAME ?? 'Left 4 Dead 2'
+const serverName = import.meta.env.VITE_SRCDS_SERVER_NAME ?? 'Counter-Strike 2'
 const serverAddr = import.meta.env.VITE_SRCDS_SERVER_ADDRESS ?? 'example.com'
 const serverPort = import.meta.env.VITE_SRCDS_SERVER_PORT ?? '27015'
 
 // APP 下载链接
-const appDownUrl = `https://github.com/${/^[A-Za-z]+$/.test(serverProvider) ? serverProvider : 'GitHub'}/l4d2-server-introduce/releases/latest`
+const appDownUrl = `https://github.com/${/^[A-Za-z]+$/.test(serverProvider) ? serverProvider : 'GitHub'}/cs2-server-introduce/releases/latest`
 
 // 服务器连接协议链接
 const steamConnectLink: Ref<BtnConnectStatus | string> = ref(BtnConnectStatus.RESOLVING)
 const steamConnectDialog = ref(false)
+
+// 设置密码
+const srcdsSetDialog = ref(false)
+const srcdsPasswordValue = ref('')
 
 // 按钮样式
 const buttonConfig: ComputedRef<ButtonConfig> = computed(() => {
@@ -124,6 +173,14 @@ const buttonConfig: ComputedRef<ButtonConfig> = computed(() => {
         click: refreshSteamConnectLink,
       }
 
+    case BtnConnectStatus.NEEDPASSWD:
+      return {
+        label: '设置密码',
+        icon: 'pi pi-pencil',
+        severity: 'warn',
+        click: srcdsOpenDialog,
+      }
+
     default:
     case BtnConnectStatus.ERROR:
       return {
@@ -139,15 +196,26 @@ const buttonConfig: ComputedRef<ButtonConfig> = computed(() => {
  * 生成Steam服务器连接的渐进式连接
  * @param address 地址
  * @param port 端口
+ * @param password 密码
  */
-async function generateSteamBrowserProtocol(address: string, port: string): Promise<string> {
+async function generateSteamBrowserProtocol(
+  address: string,
+  port?: string,
+  password?: string,
+): Promise<string> {
   const ip = await resolveHostToIPv4(address)
 
-  if (!port) {
-    return `steam://connect/${ip}`
+  let url = `steam://connect/${ip}`
+
+  if (port) {
+    url += `:${port}`
   }
 
-  return `steam://connect/${ip}:${port}`
+  if (password) {
+    url += `/${encodeURIComponent(password)}`
+  }
+
+  return url
 }
 
 /**
@@ -156,7 +224,8 @@ async function generateSteamBrowserProtocol(address: string, port: string): Prom
 async function refreshSteamConnectLink() {
   try {
     steamConnectLink.value = BtnConnectStatus.RESOLVING
-    steamConnectLink.value = await generateSteamBrowserProtocol(serverAddr, serverPort)
+    const password = srcds.password !== defaultServerPassword ? srcds.password : undefined
+    steamConnectLink.value = await generateSteamBrowserProtocol(serverAddr, serverPort, password)
   } catch (error) {
     switch (true) {
       case error instanceof DNSError:
@@ -210,8 +279,41 @@ function launchSteamConnectLink() {
   }, 500)
 }
 
+/** 打开服务器信息编辑对话框 */
+function srcdsOpenDialog() {
+  srcdsPasswordValue.value = srcds.password !== defaultServerPassword ? srcds.password : ''
+  srcdsSetDialog.value = true
+}
+
+/** 重置服务器信息 */
+function srcdsResetStore() {
+  srcds.reset()
+  steamConnectLink.value = BtnConnectStatus.NEEDPASSWD
+  srcdsSetDialog.value = false
+}
+
+/** 保存服务器信息 */
+function srcdsSaveStore() {
+  if (srcdsPasswordValue.value === '') srcdsPasswordValue.value = defaultServerPassword
+
+  srcds.password = srcdsPasswordValue.value
+  srcdsPasswordValue.value = srcds.password !== defaultServerPassword ? srcds.password : ''
+  srcdsSetDialog.value = false
+
+  if (srcds.password === defaultServerPassword) {
+    steamConnectLink.value = BtnConnectStatus.NEEDPASSWD
+  } else {
+    refreshSteamConnectLink()
+  }
+}
+
 onMounted(async () => {
-  refreshSteamConnectLink()
+  if (srcds.password === defaultServerPassword) {
+    steamConnectLink.value = BtnConnectStatus.NEEDPASSWD
+  } else {
+    refreshSteamConnectLink()
+  }
+
   document.title = `由 ${serverProvider} 提供的 ${serverName} 服务器`
 })
 </script>

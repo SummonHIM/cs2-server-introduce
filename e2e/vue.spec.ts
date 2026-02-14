@@ -62,6 +62,6 @@ test.describe('Home Page', () => {
 
     // 检查版权声明存在
     const copyrightText = footer.locator('p').nth(1)
-    await expect(copyrightText).toContainText('Left 4 Dead 2 and related assets are trademarks')
+    await expect(copyrightText).toContainText('Counter-Strike 2 and related assets are trademarks')
   })
 })

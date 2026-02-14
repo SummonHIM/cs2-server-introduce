@@ -22,7 +22,7 @@ defineOptions({
 })
 
 const serverProvider = import.meta.env.VITE_SRCDS_SERVER_PROVIDER ?? '好心人'
-const serverName = import.meta.env.VITE_SRCDS_SERVER_NAME ?? 'Left 4 Dead 2'
+const serverName = import.meta.env.VITE_SRCDS_SERVER_NAME ?? 'Counter-Strike 2'
 
 onMounted(async () => {
   document.title = `页面未找到 - 由 ${serverProvider} 提供的 ${serverName} 服务器`
