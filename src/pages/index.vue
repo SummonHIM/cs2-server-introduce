@@ -34,10 +34,6 @@
 
     <Dialog v-model:visible="steamConnectDialog" modal header="正在连接到服务器…">
       <p>如果没有任何反应，请确认已安装并登录 Steam 客户端。</p>
-
-      <template #footer>
-        <Button label="关闭" severity="secondary" @click="steamConnectDialog = false" autofocus />
-      </template>
     </Dialog>
 
     <Dialog
@@ -55,11 +51,11 @@
           fluid
           toggleMask
         />
-        <Message size="small" severity="secondary" variant="simple">
-          密码会长期保存在当前浏览器中。
-        </Message>
         <label for="set_srcds_password">服务器密码</label>
       </FloatLabel>
+      <p class="mt-1 font-thin text-xs">
+        密码会长期保存在当前浏览器中。
+      </p>
 
       <template #footer>
         <div class="flex items-center justify-between w-full">
