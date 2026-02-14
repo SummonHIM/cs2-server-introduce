@@ -17,7 +17,7 @@ export const useSrcdsStore = defineStore(
 
     return {
       password,
-      reset
+      reset,
     }
   },
   { persist: true },

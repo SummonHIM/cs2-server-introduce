@@ -2,8 +2,8 @@
   <div v-bind="$attrs" class="mx-1 mt-1 mb-1 text-center">
     <p>© {{ currentYear }} {{ serverProvider }}</p>
     <p class="font-thin text-xs">
-      Counter-Strike 2 and related assets are trademarks and/or copyrights of Valve Corporation. This
-      project is not affiliated with or endorsed by Valve.
+      Counter-Strike 2 and related assets are trademarks and/or copyrights of Valve Corporation.
+      This project is not affiliated with or endorsed by Valve.
     </p>
   </div>
 </template>
