@@ -25,7 +25,7 @@ test.describe('Home Page', () => {
     await expect(button).toBeVisible()
 
     // 检查按钮文字
-    await expect(button).toHaveText(/开始游戏|正在查询|查询错误|网络错误|未知错误/)
+    await expect(button).toHaveText(/开始游戏|正在查询|查询错误|网络错误|未知错误|设置密码/)
   })
 
   test('Check image is visible and loaded', async ({ page }) => {
