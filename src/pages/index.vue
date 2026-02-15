@@ -53,9 +53,7 @@
         />
         <label for="set_srcds_password">服务器密码</label>
       </FloatLabel>
-      <p class="mt-1 font-thin text-xs">
-        密码会长期保存在当前浏览器中。
-      </p>
+      <p class="mt-1 font-thin text-xs">密码会长期保存在当前浏览器中。</p>
 
       <template #footer>
         <div class="flex items-center justify-between w-full">
@@ -89,7 +87,6 @@ import { AxiosError } from 'axios'
 import { useToast } from 'primevue'
 
 import FavIcon from '@/assets/logo/favicon.png'
-import GlobalFooter from '@/components/GlobalFooter.vue'
 import { DNSError, getDNSStatusMessage, resolveHostToIPv4 } from '@/dns'
 import { defaultServerPassword, useSrcdsStore } from '@/stores/srcds'
 
