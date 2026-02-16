@@ -22,6 +22,9 @@
       <div class="font-thin text-xs">
         <router-link class="underline" to="/manual">手动连接</router-link>
 
+        <!-- <a>&nbsp;|&nbsp;</a>
+        <a class="underline cursor-pointer" @click="launchSteamConnectTVLink">CSTV</a> -->
+
         <template v-if="protocol === 'http:' || protocol === 'https:'">
           <a>&nbsp;|&nbsp;</a>
           <a class="underline" :href="appDownUrl" target="_blank">下载客户端</a>
@@ -119,12 +122,14 @@ const serverProvider = import.meta.env.VITE_SRCDS_SERVER_PROVIDER ?? '好心人'
 const serverName = import.meta.env.VITE_SRCDS_SERVER_NAME ?? 'Counter-Strike 2'
 const serverAddr = import.meta.env.VITE_SRCDS_SERVER_ADDRESS ?? 'example.com'
 const serverPort = import.meta.env.VITE_SRCDS_SERVER_PORT ?? '27015'
+const serverTVPort = import.meta.env.VITE_SRCDS_SERVER_TV_PORT ?? '27020'
 
 // APP 下载链接
 const appDownUrl = `https://github.com/${/^[A-Za-z]+$/.test(serverProvider) ? serverProvider : 'GitHub'}/cs2-server-introduce/releases/latest`
 
 // 服务器连接协议链接
 const steamConnectLink: Ref<BtnConnectStatus | string> = ref(BtnConnectStatus.RESOLVING)
+const steamConnectTVLink: Ref<BtnConnectStatus | string> = ref(BtnConnectStatus.RESOLVING)
 const steamConnectDialog = ref(false)
 
 // 设置密码
@@ -217,13 +222,20 @@ async function generateSteamBrowserProtocol(
 async function refreshSteamConnectLink() {
   try {
     steamConnectLink.value = BtnConnectStatus.RESOLVING
+    steamConnectTVLink.value = BtnConnectStatus.RESOLVING
     const password = srcds.password !== defaultServerPassword ? srcds.password : undefined
     steamConnectLink.value = await generateSteamBrowserProtocol(serverAddr, serverPort, password)
+    steamConnectTVLink.value = await generateSteamBrowserProtocol(
+      serverAddr,
+      serverTVPort,
+      password,
+    )
   } catch (error) {
     switch (true) {
       case error instanceof DNSError:
         console.error(error)
         steamConnectLink.value = BtnConnectStatus.RESOLVERROR
+        steamConnectTVLink.value = BtnConnectStatus.RESOLVERROR
         toast.add({
           severity: 'error',
           summary: '查询IP地址时发生错误',
@@ -235,6 +247,7 @@ async function refreshSteamConnectLink() {
       case error instanceof AxiosError:
         console.error(error)
         steamConnectLink.value = BtnConnectStatus.NETERROR
+        steamConnectTVLink.value = BtnConnectStatus.NETERROR
         toast.add({
           severity: 'error',
           summary: '查询IP地址时发生错误',
@@ -247,6 +260,7 @@ async function refreshSteamConnectLink() {
       case error instanceof Error:
         console.error(error)
         steamConnectLink.value = BtnConnectStatus.ERROR
+        steamConnectTVLink.value = BtnConnectStatus.ERROR
         toast.add({
           severity: 'error',
           summary: '查询IP地址时发生错误',
@@ -272,6 +286,66 @@ function launchSteamConnectLink() {
   }, 500)
 }
 
+// function launchSteamConnectTVLink() {
+//   if (typeof steamConnectTVLink.value === 'string') {
+//     steamConnectDialog.value = true
+
+//     setTimeout(() => {
+//       if (typeof steamConnectTVLink.value === 'string')
+//         window.location.href = steamConnectTVLink.value
+//     }, 500)
+//     return
+//   }
+
+//   switch (steamConnectTVLink.value) {
+//     case BtnConnectStatus.RESOLVING:
+//       toast.add({
+//         severity: 'warn',
+//         summary: '正在查询',
+//         detail: `正在查询服务器的 IP 地址。请稍后…`,
+//         life: 5000,
+//       })
+//       break
+
+//     case BtnConnectStatus.RESOLVERROR:
+//       toast.add({
+//         severity: 'error',
+//         summary: '查询错误',
+//         detail: `查询服务器的 IP 地址失败。`,
+//         life: 5000,
+//       })
+//       break
+
+//     case BtnConnectStatus.NETERROR:
+//       toast.add({
+//         severity: 'error',
+//         summary: '网络错误',
+//         detail: `查询服务器的 IP 地址失败。`,
+//         life: 5000,
+//       })
+//       break
+
+//     case BtnConnectStatus.NEEDPASSWD:
+//       toast.add({
+//         severity: 'warn',
+//         summary: '设置密码',
+//         detail: `请先设置服务器密码后再尝试连接。`,
+//         life: 5000,
+//       })
+//       break
+
+//     default:
+//     case BtnConnectStatus.ERROR:
+//       toast.add({
+//         severity: 'warn',
+//         summary: '未知错误',
+//         detail: `发生未知错误。请将控制台日志发送给站点管理员。`,
+//         life: 5000,
+//       })
+//       break
+//   }
+// }
+
 /** 打开服务器信息编辑对话框 */
 function srcdsOpenDialog() {
   srcdsPasswordValue.value = srcds.password !== defaultServerPassword ? srcds.password : ''
@@ -282,6 +356,7 @@ function srcdsOpenDialog() {
 function srcdsResetStore() {
   srcds.reset()
   steamConnectLink.value = BtnConnectStatus.NEEDPASSWD
+  steamConnectTVLink.value = BtnConnectStatus.NEEDPASSWD
   srcdsSetDialog.value = false
 }
 
@@ -295,6 +370,7 @@ function srcdsSaveStore() {
 
   if (srcds.password === defaultServerPassword) {
     steamConnectLink.value = BtnConnectStatus.NEEDPASSWD
+    steamConnectTVLink.value = BtnConnectStatus.NEEDPASSWD
   } else {
     refreshSteamConnectLink()
   }
@@ -303,6 +379,7 @@ function srcdsSaveStore() {
 onMounted(async () => {
   if (srcds.password === defaultServerPassword) {
     steamConnectLink.value = BtnConnectStatus.NEEDPASSWD
+    steamConnectTVLink.value = BtnConnectStatus.NEEDPASSWD
   } else {
     refreshSteamConnectLink()
   }

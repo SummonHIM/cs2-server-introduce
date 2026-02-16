@@ -17,28 +17,45 @@
       <TutorialCard :images="galleriaCVCImages">
         <template #title>第二步：连接到服务器</template>
         <template #content>
-          <div class="flex">
-            <InputGroup>
-              <FloatLabel variant="on">
-                <InputText
-                  id="console_connect_command"
-                  type="text"
-                  v-model="consoleConnectCommand"
-                  fluid
-                />
-                <label for="console_connect_command">进服命令</label>
-              </FloatLabel>
-              <InputGroupAddon>
-                <Button
-                  icon="pi pi-copy"
-                  severity="secondary"
-                  variant="text"
-                  @click="copy(consoleConnectCommand, toast)"
-                />
-              </InputGroupAddon>
-            </InputGroup>
-          </div>
-          <p>1. 按下打开控制台的按键<code>`~</code>（标点和波浪线）打开控制台。</p>
+          <InputGroup>
+            <FloatLabel variant="on">
+              <InputText
+                id="console_connect_command"
+                type="text"
+                v-model="consoleConnectCommand"
+                fluid
+              />
+              <label for="console_connect_command">进服命令</label>
+            </FloatLabel>
+            <InputGroupAddon>
+              <Button
+                icon="pi pi-copy"
+                severity="secondary"
+                variant="text"
+                @click="copy(consoleConnectCommand, toast)"
+              />
+            </InputGroupAddon>
+          </InputGroup>
+          <InputGroup class="mt-2">
+            <FloatLabel variant="on">
+              <InputText
+                id="console_connect_command"
+                type="text"
+                v-model="consoleConnectTVCommand"
+                fluid
+              />
+              <label for="console_connect_command">CSTV 进服命令</label>
+            </FloatLabel>
+            <InputGroupAddon>
+              <Button
+                icon="pi pi-copy"
+                severity="secondary"
+                variant="text"
+                @click="copy(consoleConnectTVCommand, toast)"
+              />
+            </InputGroupAddon>
+          </InputGroup>
+          <p class="mt-2">1. 按下打开控制台的按键<code>`~</code>（标点和波浪线）打开控制台。</p>
           <p>2. 将以上进服命令复制到控制台输入框中，并输入正确的服务器密码。最后按下回车。</p>
         </template>
       </TutorialCard>
@@ -73,7 +90,11 @@ const serverProvider = import.meta.env.VITE_SRCDS_SERVER_PROVIDER ?? '好心人'
 const serverName = import.meta.env.VITE_SRCDS_SERVER_NAME ?? 'Counter-Strike 2'
 const serverAddr = import.meta.env.VITE_SRCDS_SERVER_ADDRESS ?? 'example.com'
 const serverPort = import.meta.env.VITE_SRCDS_SERVER_PORT ?? '27015'
+const serverTVPort = import.meta.env.VITE_SRCDS_SERVER_TV_PORT ?? '27020'
 const consoleConnectCommand = ref(`password ${srcds.password}; connect ${serverAddr}:${serverPort}`)
+const consoleConnectTVCommand = ref(
+  `password ${srcds.password}; connect ${serverAddr}:${serverTVPort}`,
+)
 
 // 返回菜单
 const menuItems: GlobalTabbarButtonProps[] = [
