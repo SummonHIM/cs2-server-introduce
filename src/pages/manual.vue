@@ -39,12 +39,12 @@
           <InputGroup class="mt-2">
             <FloatLabel variant="on">
               <InputText
-                id="console_connect_command"
+                id="console_connect_tv_command"
                 type="text"
                 v-model="consoleConnectCommand.tv"
                 fluid
               />
-              <label for="console_connect_command">CSTV 进服命令</label>
+              <label for="console_connect_tv_command">CSTV 进服命令</label>
             </FloatLabel>
             <InputGroupAddon>
               <Button
