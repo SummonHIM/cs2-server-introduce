@@ -22,7 +22,7 @@
               <InputText
                 id="console_connect_command"
                 type="text"
-                v-model="consoleConnectCommand"
+                v-model="consoleConnectCommand.normal"
                 fluid
               />
               <label for="console_connect_command">进服命令</label>
@@ -32,7 +32,7 @@
                 icon="pi pi-copy"
                 severity="secondary"
                 variant="text"
-                @click="copy(consoleConnectCommand, toast)"
+                @click="copy(consoleConnectCommand.normal, toast)"
               />
             </InputGroupAddon>
           </InputGroup>
@@ -41,7 +41,7 @@
               <InputText
                 id="console_connect_command"
                 type="text"
-                v-model="consoleConnectTVCommand"
+                v-model="consoleConnectCommand.tv"
                 fluid
               />
               <label for="console_connect_command">CSTV 进服命令</label>
@@ -51,7 +51,7 @@
                 icon="pi pi-copy"
                 severity="secondary"
                 variant="text"
-                @click="copy(consoleConnectTVCommand, toast)"
+                @click="copy(consoleConnectCommand.tv, toast)"
               />
             </InputGroupAddon>
           </InputGroup>
@@ -68,7 +68,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { ref } from 'vue'
 
 import { useToast } from 'primevue/usetoast'
 
@@ -77,6 +77,7 @@ import IMGEnableConsole1 from '@/assets/images/enable_console.png'
 import IMGThumbConnectViaConsole from '@/assets/images/thumb_connect_via_console.png'
 import IMGThumbEnableConsole1 from '@/assets/images/thumb_enable_console.png'
 import type { GlobalTabbarButtonProps } from '@/components/GlobalToolbar.vue'
+import { srcdsEnv } from '@/srcds'
 import { useSrcdsStore } from '@/stores/srcds'
 import { copy } from '@/utils'
 
@@ -85,16 +86,12 @@ defineOptions({
 })
 
 const toast = useToast()
-const srcds = useSrcdsStore()
-const serverProvider = import.meta.env.VITE_SRCDS_SERVER_PROVIDER ?? '好心人'
-const serverName = import.meta.env.VITE_SRCDS_SERVER_NAME ?? 'Counter-Strike 2'
-const serverAddr = import.meta.env.VITE_SRCDS_SERVER_ADDRESS ?? 'example.com'
-const serverPort = import.meta.env.VITE_SRCDS_SERVER_PORT ?? '27015'
-const serverTVPort = import.meta.env.VITE_SRCDS_SERVER_TV_PORT ?? '27020'
-const consoleConnectCommand = ref(`password ${srcds.password}; connect ${serverAddr}:${serverPort}`)
-const consoleConnectTVCommand = ref(
-  `password ${srcds.password}; connect ${serverAddr}:${serverTVPort}`,
-)
+const srcdsStore = useSrcdsStore()
+
+const consoleConnectCommand = ref({
+  normal: `password ${srcdsStore.password}; connect ${srcdsEnv.addr}:${srcdsEnv.port}`,
+  tv: `password ${srcdsStore.passwordTV}; connect ${srcdsEnv.addr}:${srcdsEnv.portTv}`,
+})
 
 // 返回菜单
 const menuItems: GlobalTabbarButtonProps[] = [
@@ -133,8 +130,4 @@ const galleriaCVCImages = ref([
     thumbnailImageSrc: IMGThumbConnectViaConsole,
   },
 ])
-
-onMounted(async () => {
-  document.title = `手动连接 - 由 ${serverProvider} 提供的 ${serverName} 服务器`
-})
 </script>
