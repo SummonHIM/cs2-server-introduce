@@ -36,7 +36,7 @@ VITE_SRCDS_SERVER_PROVIDER=Somebody      # Server provider name
 VITE_SRCDS_SERVER_NAME=Counter-Strike 2  # Server name
 VITE_SRCDS_SERVER_ADDRESS=example.com    # Server IP
 VITE_SRCDS_SERVER_PORT=27015             # Server port
-VITE_SRCDS_SERVER_TV_PORT=27020          # CSTV port
+VITE_SRCDS_SERVER_PORT_TV=27020          # CSTV port
 ```
 
 ### Compile and Hot-Reload for Development
